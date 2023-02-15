@@ -1,0 +1,81 @@
+<script>
+  
+  document.addEventListener("DOMContentLoaded", function(){
+    google.script.run.withSuccessHandler(sWL_SETTINGS).withFailureHandler(onFailure).getWLevel();
+    google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache();
+    google.script.run.withSuccessHandler(checkRSWL).withFailureHandler(onFailure).checkRSWL("settings");
+    setInterval(function(){ google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache(); },60000)
+  })
+  
+  document.getElementById('WL_SETTINGS').addEventListener('change', setSettingsWl);
+  document.getElementById('WL_TAMEMBERMANAGMENT').addEventListener('change', setTAWlManagement);
+  document.getElementById('LOGO').addEventListener('focusout', setLogo);
+
+  function checkRSWL(data) {
+    if(data[0] == 1){
+      sCollapsibles();
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('body').style.display = '';
+    } else {
+      window.open(data[1]+"?page=home",'_top');
+    }
+  }
+  
+  function verifyCache(data) {
+    if(data[0] == 1){
+      // Do Nothing
+    } else {
+      window.open(data[1]+"?page=auth",'_top');
+    }
+  }
+  
+  function sCollapsibles() {
+    var elems = document.querySelectorAll('.collapsible');
+    var instances = M.Collapsible.init(elems);
+  }
+  
+   function sWL_SETTINGS(wl) {
+    document.getElementById("WL_SETTINGS").value = wl[0];
+    document.getElementById("WL_TAMEMBERMANAGMENT").value = wl[1];
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems, {
+      dropdownOptions: {
+        coverTrigger: false,
+      },
+    });
+  }
+  
+  function setLogo(){
+    var value = document.getElementById("LOGO").value;
+    google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).setLogo(value);
+  }
+  
+  function setSettingsWl(){
+    var value = document.getElementById("WL_SETTINGS").value;
+    google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).setSettingWl(value);
+  }
+  
+  function setTAWlManagement(){
+    var value = document.getElementById("WL_TAMEMBERMANAGMENT").value;
+    google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).setTAWlManagement(value);
+  }
+  
+  function onFailure(error) {
+    var messages = document.getElementById('errorM');
+    messages.innerHTML = error.message;
+    
+    document.getElementById('success').style.display = "none";
+    document.getElementById('error').style.display = "block";
+  }
+      
+  function onSuccess(){
+    document.getElementById('error').style.display = "none";
+    document.getElementById('success').style.display = "block";
+    google.script.run.withSuccessHandler(checkRSWL).withFailureHandler(onFailure).checkRSWL("settings");
+    
+    setTimeout(removeNotification, 10000)
+    function removeNotification() {
+      document.getElementById('success').style.display = "none";
+    }
+  }
+</script>
