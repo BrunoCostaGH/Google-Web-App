@@ -1,0 +1,350 @@
+ <!DOCTYPE html>
+  <html>
+    <head>
+      <base target="_top">
+      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!-- Compiled and minified CSS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <style>
+    body::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    body {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    
+    .signature {
+    width: 35%;
+    height: 20%;
+    cursor: crosshair;
+    position: absolute;
+    }
+    
+    .error {
+    position: absolute;
+    display: none;
+    top: 0px;
+    width: 100%;
+    padding: 0.05%;
+    background-color: #f44336;
+    color: white;
+    }
+    
+    .success {
+    position: absolute;
+    display: none;
+    top: 0px;
+    width: 100%;
+    padding: 0.05%;
+    background-color: #4CAF50;
+    color: white;
+    }
+ 
+    .closebtn {
+    color: white;
+    font-weight: bold;
+    float: right;
+    padding-top: 0.75%;
+    padding-right: 2%;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 0.3s;
+    }
+    
+    .closebtn:hover {
+    color: black;
+    }
+
+    nav .input-field label i {
+      color: black;
+      -webkit-transition: color .3s;
+      transition: color .3s;
+    }
+    
+    input:not([type]),
+    input[type=text]:not(.browser-default),
+    input[type=password]:not(.browser-default),
+    input[type=email]:not(.browser-default),
+    input[type=url]:not(.browser-default),
+    input[type=time]:not(.browser-default),
+    input[type=date]:not(.browser-default),
+    input[type=datetime]:not(.browser-default),
+    input[type=datetime-local]:not(.browser-default),
+    input[type=tel]:not(.browser-default),
+    input[type=number]:not(.browser-default),
+    input[type=search]:not(.browser-default),
+    textarea.materialize-textarea {
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid #9e9e9e;
+      border-radius: 0;
+      outline: none;
+      height: 3rem;
+      width: 100%;
+      font-size: 16px;
+      margin: 4px 0 6px 0;
+      padding: 0;
+      -webkit-box-shadow: none;
+              box-shadow: none;
+      -webkit-box-sizing: content-box;
+              box-sizing: content-box;
+      -webkit-transition: border .3s, -webkit-box-shadow .3s;
+      transition: border .3s, -webkit-box-shadow .3s;
+      transition: box-shadow .3s, border .3s;
+      transition: box-shadow .3s, border .3s, -webkit-box-shadow .3s;
+    }
+    
+    .input-field > label:not(.label-icon).active {
+      color: black;
+      -webkit-transform: translateY(-2.5px) scale(0.75);
+              transform: translateY(-2.5px) scale(0.75);
+      -webkit-transform-origin: 0 0;
+              transform-origin: 0 0;
+    }
+    
+    input:not([type]):disabled + label.active,
+    input:not([type])[readonly="readonly"] + label.active,
+    input[type=text]:not(.browser-default):disabled + label.active,
+    input[type=text]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=password]:not(.browser-default):disabled + label.active,
+    input[type=password]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=email]:not(.browser-default):disabled + label.active,
+    input[type=email]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=url]:not(.browser-default):disabled + label.active,
+    input[type=url]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=time]:not(.browser-default):disabled + label.active,
+    input[type=time]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=date]:not(.browser-default):disabled + label.active,
+    input[type=date]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=datetime]:not(.browser-default):disabled + label.active,
+    input[type=datetime]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=datetime-local]:not(.browser-default):disabled + label.active,
+    input[type=datetime-local]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=tel]:not(.browser-default):disabled + label.active,
+    input[type=tel]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=number]:not(.browser-default):disabled + label.active,
+    input[type=number]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=search]:not(.browser-default):disabled + label.active,
+    input[type=search]:not(.browser-default)[readonly="readonly"] + label.active,
+    textarea.materialize-textarea:disabled + label.active,
+    textarea.materialize-textarea[readonly="readonly"] + label.active {
+      color: black;
+    }
+    </style>
+    <body class="red darken-4" >
+      <nav class="red accent-4">
+        <div class="nav-wrapper">
+          <!-------- Home Menu --------->
+          <div id="homeMenu" style="display: none;">
+            <ul id="nav-mobile" class="left">
+            <? if (CacheService.getUserCache().get("wlTA") > 0) {?>
+              <li><a onclick="showTraining()">Training Academy</a></li>
+            <? }?>
+            </ul>
+            <ul id="nav-mobile" class="right">
+            <? if (CacheService.getUserCache().get("userCredentials")) {?>
+              <li><a>[<?=CacheService.getUserCache().get("badge")?>] <?=CacheService.getUserCache().get("name")?></a></li>
+            <? }?>
+            <? if (CacheService.getUserCache().get("wl") >= PropertiesService.getScriptProperties().getProperty("WL_SETTINGS")) {?>
+              <li><a href="<?= ScriptApp.getService().getUrl(); ?>?page=settings"><i class="material-icons left">settings</i></a></li>
+            <? }?>
+            </ul>
+          </div>
+           <!--------- TA Menu ---------->
+          <div id="taMenu" style="display: none;">
+            <ul id="nav-mobile" class="left">
+              <li><a onclick="hideTraining()"><i class="material-icons left">arrow_back</i>Back</a></li>
+            </ul>
+            <ul id="nav-mobile" class="right">
+              <? if (CacheService.getUserCache().get("userCredentials")) {?>
+                <li><a>[<?=CacheService.getUserCache().get("badge")?>] <?=CacheService.getUserCache().get("name")?></a></li>
+              <? }?>
+              <? if (CacheService.getUserCache().get("wlTA") >= PropertiesService.getScriptProperties().getProperty("WL_TAMEMBERSETTINGS")) {?>
+              <li><a href="<?= ScriptApp.getService().getUrl(); ?>?page=membermanagement"><i class="material-icons left">person</i></a></li>
+              <? }?>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-------------------------------------------------------------------------------------------------------------------------------------------------> 
+      <div id="error" class="error">
+        <span class="closebtn material-icons" onclick="this.parentElement.style.display='none';">close</span> 
+        <p id="errorM" style="padding-left: 1%;"/>
+      </div>
+      <div id="success" class="success">
+        <span class="closebtn material-icons" onclick="this.parentElement.style.display='none';">close</span> 
+        <p id="successM" style="padding-left: 1%;"/>
+      </div>
+      <!-------------------------------------------------------------------------------------------------------------------------------------------------> 
+      <div id="loading" class="center-align" style="padding-top: 5%;">
+        <div>
+          <img src ="<?=PropertiesService.getScriptProperties().getProperty("LOGO")?>" style="width: 15%;" />
+        </div>
+        <div style="padding-top: 2%;">
+          <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-white">
+              <div class="circle-clipper left"><div class="circle"></div></div>
+              <div class="gap-patch"><div class="circle"></div></div>
+              <div class="circle-clipper right"><div class="circle"></div></div>
+            </div>
+          </div>
+        </div>
+       <p id="identity" class="white-text">Verifying Identity...<p>
+       <p id="modules" class="white-text" style="display: none;">Loading Modules...<p>
+      </div>
+      <!-------------------------------------------------------------------------------------------------------------------------------------------------> 
+      <div id="homeBody" style="display: none;">
+        <div class="row center-align" style="margin-top: 5%;">
+          <img src ="<?=PropertiesService.getScriptProperties().getProperty("LOGO")?>" style="width: 15%;" />
+        </div>
+      </div>
+      <!-------------------------------------------------------------------------------------------------------------------------------------------------> 
+      <div id="taBody" style="margin-top: 4%; display: none;">
+        <? if(CacheService.getUserCache().get("wlTA") >= 4) {?>
+          <div class="row"><label class="white-text col offset-s9">Instructor Training</label><div class="switch"><label><input type="checkbox" id="instraining"><span class="lever"></span></label></div></div>
+        <? } else {?>
+          <div class="row disabled" ><label class="white-text col offset-s9">Instructor Training</label><div class="switch"><label><input type="checkbox" id="instraining" disabled><span class="lever"></span></label></div></div>
+        <? }?>
+        <div class="row">
+          <div class="input-field col offset-s2 s3 white z-depth-3">
+            <input type="number" id="badge" class="autocomplete black-text" autocomplete="off" maxlength="3">
+            <label for="badge">Trainee's Badge</label>
+          </div>
+          <div class="input-field col offset-s1 s3 white z-depth-3">
+            <input type="text" id="name" class="black-text" disabled>
+            <label for="name">Trainee's Name</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col offset-s2 s3 white z-depth-3">
+            <input type="text" id="division" class="black-text" disabled>
+            <label for="division">Trainee's Division</label>
+          </div>
+          <div class="input-field col offset-s1 s3 white z-depth-3">
+            <input type="text" id="rank" class="black-text" disabled>
+            <label for="rank">Trainee's Rank</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col offset-s2 s3 white z-depth-3">
+            <input type="text" id="training" class="autocomplete black-text" autocomplete="off">
+            <label for="training">Training</label>
+          </div>
+          <div class="input-field col offset-s1 s3 white z-depth-3">
+            <input type="text" id="status" class="autocomplete black-text" autocomplete="off">
+            <label for="status">Status</label>
+          </div>
+        </div>    
+        <div class="row hide-on-med-and-down">
+          <div class="container"><label>Signature:</label></div>
+            <div class="container">
+              <canvas id="signature" style="padding-right: 13%;">Sorry, your browser does not support HTML5 canvas technology.</canvas>
+              <img src="<?=PropertiesService.getScriptProperties().getProperty("LOGO")?>" style="width: 13%;" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col offset-s3 s8">
+            <button class="btn waves-effect waves-light red accent-4 container" type="submit" name="action" onclick="setData()">Submit</button>
+          </div>
+        </div>
+        <div class="fixed-action-btn">
+          <a class="btn-floating btn-large white">
+            <i class="large material-icons red-text">expand_less</i> 
+          </a>
+          <ul>
+            <li><a class="btn-floating red" href="<?= ScriptApp.getService().getUrl(); ?>?page=trainingdb"><i class="material-icons">remove_red_eye</i></a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Compiled and minified JavaScript -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
+      <script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+      <?!= include("hm.js"); ?>
+      <? var dateOne = new Date("December 27, 2021");var dateTwo = new Date();if(dateOne.getMonth() == dateTwo.getMonth() && dateTwo.getDate() <= dateOne.getDate()) { ?>
+        <div id="snowmanDv" class="snowmanDv hide-on-med-and-down" style="display: none;">
+        <div class="snowman">
+            <div class="face">
+                <div class="shadow1">
+                    <div class="eyel"></div>
+                    <div class="eyer"></div>
+                    <div class="nose"></div>
+                    <div class="hat">
+                        <div class="h-top"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="body">
+                <div class="shadow2"></div>
+                <div class="buttons">
+                    <div class="b1"></div>
+                    <div class="b2"></div>
+                    <div class="b3"></div>
+                </div>
+                <div class="hand-l">
+                    <div class="s1"></div>
+                </div>
+                <div class="hand-r">
+                    <div class="s2"></div>
+                </div>
+            </div>
+            <div class="scarf">
+                <div class="sc1"></div>
+                <div class="sc2"></div>
+            </div>
+        </div>
+        <div class="cntnr">
+          <div class="star"></div>
+          <div class="pressie">
+            <div class="cover"></div>
+            <div class="wrap"> </div>
+            <div class="ribbon"></div>
+          </div>
+          <div class="tree">
+            <div class="base"> </div>
+            <div class="layer">
+              <div class="line"> </div>
+              <div class="bauble one"></div>
+            </div>
+        
+            <div class="layer two">
+              <div class="line two"> </div>
+              <div class="bauble two"></div>
+              <div class="socks">
+                <div class="top"> </div>
+                <div class="foot"></div>
+              </div>
+            </div>
+        
+            <div class="layer three">
+              <div class="line three"> </div>
+              <div class="bauble three"></div>
+              <div class="socks two">
+                <div class="top"> </div>
+                <div class="foot two"></div>
+              </div>
+            </div>
+          </div>
+        
+          <div class="layer four">
+            <div class="bauble four"></div>
+            <div class="star two"></div>
+            <div class="line four"> </div>
+          </div>
+        </div>
+        </div>
+        <div id="snow" class="snow" style="display: none;"></div>
+        <?!= include("[seasons]-xmas"); ?>
+      <?}?>
+        <div id="snowmanDv"></div>
+        <div id="snow"></div>
+    </body>
+  </html>
