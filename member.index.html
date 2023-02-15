@@ -1,0 +1,227 @@
+ <!DOCTYPE html>
+  <html>
+    <head>
+      <base target="_top">
+      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!-- Compiled and minified CSS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <style>
+    body::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    body {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    
+    .error {
+    position: absolute;
+    display: none;
+    top: 0px;
+    width: 100%;
+    padding: 0.05%;
+    background-color: #f44336;
+    color: white;
+    }
+    
+    .success {
+    position: absolute;
+    display: none;
+    top: 0px;
+    width: 100%;
+    padding: 0.05%;
+    background-color: #4CAF50;
+    color: white;
+    }
+ 
+    .closebtn {
+    color: white;
+    font-weight: bold;
+    float: right;
+    padding-top: 0.75%;
+    padding-right: 2%;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 0.3s;
+    }
+    
+    .closebtn:hover {
+    color: black;
+    }
+
+    nav .input-field label i {
+      color: black;
+      -webkit-transition: color .3s;
+      transition: color .3s;
+    }
+    
+    input:not([type]),
+    input[type=text]:not(.browser-default),
+    input[type=password]:not(.browser-default),
+    input[type=email]:not(.browser-default),
+    input[type=url]:not(.browser-default),
+    input[type=time]:not(.browser-default),
+    input[type=date]:not(.browser-default),
+    input[type=datetime]:not(.browser-default),
+    input[type=datetime-local]:not(.browser-default),
+    input[type=tel]:not(.browser-default),
+    input[type=number]:not(.browser-default),
+    input[type=search]:not(.browser-default),
+    textarea.materialize-textarea {
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid #9e9e9e;
+      border-radius: 0;
+      outline: none;
+      height: 3rem;
+      width: 100%;
+      font-size: 16px;
+      margin: 4px 0 6px 0;
+      padding: 0;
+      -webkit-box-shadow: none;
+              box-shadow: none;
+      -webkit-box-sizing: content-box;
+              box-sizing: content-box;
+      -webkit-transition: border .3s, -webkit-box-shadow .3s;
+      transition: border .3s, -webkit-box-shadow .3s;
+      transition: box-shadow .3s, border .3s;
+      transition: box-shadow .3s, border .3s, -webkit-box-shadow .3s;
+    }
+    
+    .input-field > label:not(.label-icon).active {
+      color: black;
+    }
+    
+    input:not([type]):disabled + label.active,
+    input:not([type])[readonly="readonly"] + label.active,
+    input[type=text]:not(.browser-default):disabled + label.active,
+    input[type=text]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=password]:not(.browser-default):disabled + label.active,
+    input[type=password]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=email]:not(.browser-default):disabled + label.active,
+    input[type=email]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=url]:not(.browser-default):disabled + label.active,
+    input[type=url]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=time]:not(.browser-default):disabled + label.active,
+    input[type=time]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=date]:not(.browser-default):disabled + label.active,
+    input[type=date]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=datetime]:not(.browser-default):disabled + label.active,
+    input[type=datetime]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=datetime-local]:not(.browser-default):disabled + label.active,
+    input[type=datetime-local]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=tel]:not(.browser-default):disabled + label.active,
+    input[type=tel]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=number]:not(.browser-default):disabled + label.active,
+    input[type=number]:not(.browser-default)[readonly="readonly"] + label.active,
+    input[type=search]:not(.browser-default):disabled + label.active,
+    input[type=search]:not(.browser-default)[readonly="readonly"] + label.active,
+    textarea.materialize-textarea:disabled + label.active,
+    textarea.materialize-textarea[readonly="readonly"] + label.active {
+      color: black;
+    }
+    </style>
+    <body class="red darken-4" >
+      <nav class="red accent-4">
+        <div class="nav-wrapper">
+          <ul id="nav-mobile" class="left">
+            <li><a href="<?= ScriptApp.getService().getUrl(); ?>?page=home"><i class="material-icons left">arrow_back</i>Back</a></li>
+          </ul>
+          <ul id="nav-mobile" class="right">
+          <? if (CacheService.getUserCache().get("userCredentials")) {?>
+            <li><a>[<?=CacheService.getUserCache().get("badge")?>] <?=CacheService.getUserCache().get("name")?></a></li>
+          <? }?>
+          </ul>
+        </div>
+      </nav>
+      <!-------------------------------------------------------------------------------------------------------------------------------------------------> 
+      <div id="error" class="error">
+        <span class="closebtn material-icons" onclick="this.parentElement.style.display='none';">close</span> 
+        <p id="errorM" style="padding-left: 1%;"/>
+      </div>
+      <div id="success" class="success">
+        <span class="closebtn material-icons" onclick="this.parentElement.style.display='none';">close</span> 
+        <p id="successM" style="padding-left: 1%;"/>
+      </div>
+      <!-------------------------------------------------------------------------------------------------------------------------------------------------> 
+      <div id="loading" class="center-align" style="padding-top: 5%;">
+        <div>
+          <img src ="<?=PropertiesService.getScriptProperties().getProperty("LOGO")?>" style="width: 15%;" />
+        </div>
+        <div style="padding-top: 2%;">
+          <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-white">
+              <div class="circle-clipper left"><div class="circle"></div></div>
+              <div class="gap-patch"><div class="circle"></div></div>
+              <div class="circle-clipper right"><div class="circle"></div></div>
+            </div>
+          </div>
+        </div>
+       <p class="white-text">Verifying Identity...<p>
+      </div>
+      <!-------------------------------------------------------------------------------------------------------------------------------------------------> 
+      <div id="body" class="container" style="padding-top: 5%; display: none;">
+        <ul class="collapsible">
+          <li>
+            <div class="collapsible-header"><i class="material-icons">person_add</i>Add/Remove Instructor's</div>
+            <div class="collapsible-body" style="background: white;">
+              <div class="row">  
+                <div class="input-field col offset-s2 s3">
+                  <input id="Mbadge" type="number" class="validate" autocomplete="off" maxlength="3">
+                  <label for="Mbadge">Instructors's Badge</label>
+                </div>
+                <div class="input-field col offset-s1 s3">
+                  <input id="Memail" type="email" class="validate" autocomplete="off">
+                  <label for="Memail" class="active">Instructors's Email</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col offset-s3 s3">
+                  <button class="btn waves-effect waves-light red accent-4 container" type="submit" name="action" onclick="addMember()">Add</button>
+                </div>
+                <div class="col s3">
+                  <button class="btn waves-effect waves-light red accent-4 container" type="submit" name="action" onclick="removeMember()">Remove</button>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">email</i>Set/Change Instructor's Email</div>
+            <div class="collapsible-body" style="background: white;">
+              <div class="row">  
+                <div class="input-field col offset-s2 s3">
+                  <input id="Ebadge" type="number" class="validate" autocomplete="off" maxlength="3">
+                  <label for="Ebadge">Instructors's Badge</label>
+                </div>
+                <div class="input-field col offset-s1 s3">
+                  <input id="Eemail" type="email" class="validate" autocomplete="off">
+                  <label for="Eemail" class="active">Instructors's Email</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col offset-s3 s8">
+                  <button class="btn waves-effect waves-light red accent-4 container" type="submit" name="action" onclick="setEmail()">Submit</button>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <!-- Compiled and minified JavaScript -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
+      <script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+      <?!= include("member.js"); ?>
+      <? var dateOne = new Date("December 27, 2020");var dateTwo = new Date();if(dateOne.getMonth() == dateTwo.getMonth() && dateTwo.getDate() <= dateOne.getDate()) { ?>
+        <div class="snow"></div>
+        <?!= include("[seasons]-xmas"); ?>
+      <?}?>
+    </body>
+  </html>
