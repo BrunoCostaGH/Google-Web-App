@@ -1,0 +1,94 @@
+<script>
+  
+  document.addEventListener("DOMContentLoaded", function(){
+    google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache();
+    google.script.run.withSuccessHandler(checkRSWL).withFailureHandler(onFailure).checkRSWL("tamember");
+    setInterval(function(){ google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache(); },60000)
+  })
+  
+  function checkRSWL(data) {
+    if(data[0] == 1){
+      sCollapsibles();
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('body').style.display = '';
+    } else {
+      window.open(data[1]+"?page=home",'_top');
+    }
+  }
+  
+  function verifyCache(data) {
+    if(data[0] == 1){
+      // Do Nothing
+    } else {
+      window.open(data[1]+"?page=auth",'_top');
+    }
+  }
+  
+  function sCollapsibles() {
+    var elems = document.querySelectorAll('.collapsible');
+    var instances = M.Collapsible.init(elems);
+  }
+  
+  function setEmail() {
+    var badge = document.getElementById('Ebadge').value;
+    var email = document.getElementById("Eemail").value;
+    var emailValid = document.getElementById("Eemail").validity.valid;
+    
+    if((badge.length == 3 || (badge.length == 2 && badge == "99")) && emailValid && email.length > 0){
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).setEmail(badge, email);
+    }
+  }
+  
+  function addMember() {
+    var badge = document.getElementById('Mbadge').value;
+    var email = document.getElementById("Memail").value;
+    var emailValid = document.getElementById("Memail").validity.valid;
+    
+    if((badge.length == 3 || (badge.length == 2 && badge == "99")) && emailValid && email.length > 0){
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).addMember(badge, email);
+    }
+  }
+  
+  function removeMember() {
+    var badge = document.getElementById('Mbadge').value;
+    
+    if(badge.length == 3 || (badge.length == 2 && badge == "99")){
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).removeMember(badge);
+    }
+  }
+  
+  function onFailure(error) {
+    var message = document.getElementById('errorM');
+    message.innerHTML = error.message;
+    
+    document.getElementById('success').style.display = "none";
+    document.getElementById('error').style.display = "block";
+  }
+        
+  function onSuccess(type){
+    var message = document.getElementById('successM');
+    
+    if (type == "email") {
+      message.innerHTML = "Email has been updated successfully!";
+      var badge = document.getElementById('Ebadge').value = "";
+      var email = document.getElementById("Eemail").value = "";
+    } else if (type == "add") {
+      message.innerHTML = "Member has been added successfully!";
+      var badge = document.getElementById('Mbadge').value = "";
+      var email = document.getElementById("Memail").value = "";
+    } else if (type == "remove") {
+      message.innerHTML = "Member has been removed successfully!";
+      var badge = document.getElementById('Mbadge').value = "";
+      var email = document.getElementById("Memail").value = "";
+    } else {
+      message.innerHTML = "Success!";
+    }
+    document.getElementById('success').style.display = "block";
+    
+    setTimeout(removeNotification, 10000)
+    function removeNotification() {
+      document.getElementById('success').style.display = "none";
+    }
+   M.updateTextFields();  
+  }
+</script>
