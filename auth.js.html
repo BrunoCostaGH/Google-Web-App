@@ -1,0 +1,85 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache();
+});
+
+document.getElementById('credentials-input').addEventListener('input', verifyCredentials);
+document.getElementById('badge').addEventListener('input', submitAccess);
+
+function verifyCache(data) {
+  if(data[0] == 1){
+    aData(['Access Granted', data[1]]);
+  } else {
+    document.getElementById("credentials").style.display = "block";
+    document.getElementById("snow").style.display = "block";
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("identity").style.display = "none";
+  }
+}
+
+function verifyCredentials() {
+  var userCredentials = document.getElementById('credentials-input').value;
+  
+  if(userCredentials.length == 6){
+  
+    document.getElementById("credentials").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+    
+    google.script.run.withSuccessHandler(aData).withFailureHandler(onFailure).verifyCredentials(userCredentials);
+  }
+}
+
+function requestAccess() {
+    document.getElementById("credentials").style.display = "none";
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("access").style.display = "block";
+}
+
+function submitAccess() {
+  var badge = document.getElementById('badge').value;
+  
+  if(badge.length == 3 || (badge.length == 2 && badge == "99")){
+    google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).submitAccess(badge);
+    document.getElementById("access").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+  }
+}
+
+function onSuccess() {
+  document.getElementById('error').style.display = "none"
+  document.getElementById("success").style.display = "block";
+  document.getElementById("credentials").style.display = "block";
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("access").style.display = "none";
+  document.getElementById("credentials-input").value = "";
+  document.getElementById("badge").value = "";
+  
+  setTimeout(removeNotification, 10000)
+  function removeNotification() {
+    document.getElementById('success').style.display = "none";
+  }
+}
+
+function onFailure(error) {
+  var messages = document.getElementById('errorM');
+  messages.innerHTML = error.message;
+  
+  document.getElementById('success').style.display = "none";
+  document.getElementById('error').style.display = "block";
+  document.getElementById("credentials").style.display = "block";
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("access").style.display = "none";
+  document.getElementById("credentials-input").value = "";
+  document.getElementById("badge").value = "";
+}
+
+function aData(data) {
+  if(data[0] == 'Access Granted'){
+    window.open(data[1]+"?page=home",'_top');
+  } else if(data[0] == 'Access Denied'){
+    document.getElementById("credentials-input").value = "";
+    document.getElementById("credentials").style.display = "block";
+    document.getElementById("loading").style.display = "none";
+  }
+}
+</script>
