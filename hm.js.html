@@ -1,0 +1,360 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  google.script.run.withSuccessHandler(loadedModules).withFailureHandler(onFailure).moduleCheck();
+  google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache();
+  google.script.run.withSuccessHandler(pBadges).withFailureHandler(onFailure).badges();
+  google.script.run.withSuccessHandler(pTraining).withFailureHandler(onFailure).trainings();
+  pStatus();
+  pFloatBtn();
+  setInterval(function(){ google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache(); },60000);
+});
+  
+document.getElementById('badge').addEventListener('focusout', getName);
+document.getElementById('badge').addEventListener('focusout', getDivision);
+document.getElementById('badge').addEventListener('focusout', getRank);
+document.getElementById('instraining').addEventListener('change', clearFields);
+
+function loadedModules(){
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('homeMenu').style.display='block';
+  document.getElementById('homeBody').style.display='block';
+  document.getElementById('snowmanDv').style.display='block';
+  document.getElementById('snow').style.display='block';
+  document.getElementById('taMenu').style.display='none';
+  document.getElementById('taBody').style.display='none';
+}
+
+function showTraining() {
+  clearFields()
+  document.getElementById('homeMenu').style.display='none';
+  document.getElementById('homeBody').style.display='none';
+  document.getElementById('snowmanDv').style.display='none';
+  document.getElementById('taMenu').style.display='block';
+  document.getElementById('taBody').style.display='block';
+}
+
+function hideTraining() {
+  document.getElementById('homeMenu').style.display='block';
+  document.getElementById('homeBody').style.display='block';
+  document.getElementById('snowmanDv').style.display='block';
+  document.getElementById('taMenu').style.display='none';
+  document.getElementById('taBody').style.display='none';
+  clearFields()
+}
+
+function verifyCache(data) {
+  if(data[0] == 1){
+    // Do Nothing
+    document.getElementById('identity').style.display = 'none';
+    document.getElementById('modules').style.display = '';
+  } else {
+    window.open(data[1]+"?page=auth",'_top');
+  }
+}
+
+function clearFields() {
+  document.getElementById('badge').value = "";
+  document.getElementById('name').value = "";
+  document.getElementById('division').value = "";
+  document.getElementById('rank').value = "";
+  document.getElementById('training').value = "";
+  document.getElementById('status').value = "";
+  M.updateTextFields();
+}
+
+function getName() {
+  var badge = document.getElementById('badge').value;
+  if (badge.length != 0 && (badge.length == 3 || badge == "99")) {
+    setTimeout(gName, 1000);
+    document.getElementById('name').value = "Loading...";
+  } else if(badge.length == 0) {
+    document.getElementById('name').value = "";
+  }
+ M.updateTextFields();  
+}
+
+function gName() {
+  var badge = document.getElementById('badge').value;
+  
+  google.script.run.withSuccessHandler(pName).withFailureHandler(onFailure).getName(badge);
+}
+
+function pName(name){
+console.log(name)
+  var badge = document.getElementById('badge').value;
+  if (badge.length != 0 && badge == name[1]) {
+    document.getElementById('name').value = name[0];
+  }
+ M.updateTextFields();
+}
+  
+function getDivision() {
+  var badge = document.getElementById('badge').value;
+  if (badge.length != 0 && (badge.length == 3 || badge == "99")) {
+    setTimeout(gDivision, 1000);
+    document.getElementById('division').value = "Loading...";
+  } else if(badge.length == 0) {
+    document.getElementById('division').value = "";
+  }
+ M.updateTextFields();  
+}
+  
+function gDivision() {
+  var badge = document.getElementById('badge').value;
+  var type =  document.getElementById('instraining').checked;
+  
+  google.script.run.withSuccessHandler(pDivision).withFailureHandler(onFailure).getDivision(badge, type);
+}
+
+function pDivision(division){
+  var badge = document.getElementById('badge').value;
+  if (badge.length != 0 && badge == division[1]) {
+    if (division[0] != true) {
+      document.getElementById('division').value = division[0];
+    }
+  }
+ M.updateTextFields();
+}
+  
+function getRank() {
+  var badge = document.getElementById('badge').value;
+  if (badge.length != 0 && (badge.length == 3 || badge == "99")) {
+    setTimeout(gRank, 1000);
+    document.getElementById('rank').value = "Loading..."; 
+  } else if(badge.length == 0) {
+    document.getElementById('rank').value = "";
+  }
+ M.updateTextFields();  
+}
+  
+function gRank() {
+  var badge = document.getElementById('badge').value;
+  var type =  document.getElementById('instraining').checked;
+  
+  google.script.run.withSuccessHandler(pRank).withFailureHandler(onFailure).getRank(badge, type);
+}
+
+function pRank(rank) {
+  var badge = document.getElementById('badge').value;
+  if (badge.length != 0 && badge == rank[1]) {
+    document.getElementById('rank').value = rank[0];
+    if (rank[2] == true && rank[0].length != 0) {
+      document.getElementById('division').value = "Training Academy";
+    } else if (rank[0].length == 0) {
+    document.getElementById('rank').value = "Not Available";
+    }
+  }
+ M.updateTextFields();
+}
+  
+function pBadges(badges) {
+  var elems = document.getElementById('badge');
+  var instances = M.Autocomplete.init(elems, { data: badges });
+}
+
+function pTraining(training) {
+  var autocomplete = document.getElementById('training');
+  var instances = M.Autocomplete.init(autocomplete, { data: training });
+}
+
+function pStatus() {
+  var elems = document.getElementById('status');
+  var instances = M.Autocomplete.init(elems, { data: {"Pass": null, "Fail": null} });
+}
+
+function pFloatBtn() {
+  var elems = document.querySelectorAll('.fixed-action-btn');
+  var instances = M.FloatingActionButton.init(elems, {
+    direction: 'top',
+  });
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function setData(val) {
+  var badge = document.getElementById('badge').value;
+  var name = document.getElementById('name').value;
+  var division = document.getElementById('division').value;
+  var rank = document.getElementById('rank').value;
+  var training = document.getElementById('training').value;
+  var status = document.getElementById('status').value;
+  var esignature = signature.toDataURL();
+  var type = document.getElementById('instraining').checked;
+  
+  
+ if (val == undefined) {
+  var message, x 
+  message = document.getElementById('errorM');
+  message.innerHTML = "";
+  try {  
+    if ( name.length == 0 && badge.length == 0 && division.length == 0 && rank.length == 0 ) {
+      throw "ERROR: Check Information.";
+    } else if ( badge.length != 0 && badge == "Loading..." || division == "Loading..." || rank == "Loading..." ) {
+      throw "ERROR: Please wait for data to load.";
+    } else if( training.length == 0 ) {
+      throw "ERROR: Invalid Training";
+    } else if( status.length == 0 ){
+      throw "ERROR: Invalid Status";
+    } else {
+      document.getElementById('error').style.display = "none"; 
+      google.script.run.withSuccessHandler(setData).withFailureHandler(onFailure).setData(badge, name, division, rank, training, status, esignature, type);
+    }
+  }
+  catch(err) {
+    document.getElementById('success').style.display = "none";
+    document.getElementById('error').style.display = "block";
+    message.innerHTML = err;  
+    
+    setTimeout(removeNotification, 10000)
+    function removeNotification() {
+      document.getElementById('error').style.display = "none";
+    }
+  }
+ } else if (val[0] == false) {
+  onSuccess("Queue");
+  google.script.run.withSuccessHandler(setData).withFailureHandler(onFailure).setData(badge, name, division, rank, training, status, esignature, type);
+ } else if (val[0] == true) {onSuccess("Success")}
+} 
+
+function onFailure(error) {
+  var messages = document.getElementById('errorM');
+  messages.innerHTML = error.message;
+  
+  document.getElementById('success').style.display = "none";
+  document.getElementById('error').style.display = "block";
+}
+      
+function onSuccess(type, queuepos, queuelenghh){
+  var messages = document.getElementById('successM');
+  
+ if (type == "Success") {
+  messages.innerHTML = "Success! Training registered successfully.";
+  document.getElementById('error').style.display = "none";
+  document.getElementById('success').style.backgroundColor  = "#4CAF50";
+  document.getElementById('success').style.display = "block";
+  document.getElementById('instraining').checked = false;
+  clearFields();
+  
+  setTimeout(removeNotification, 10000)
+  function removeNotification() {
+    document.getElementById('success').style.display = "none";
+  }
+ } else if (type == "Queue") {
+  messages.innerHTML = "You are in the Queue. Don't close this tab.";
+  document.getElementById('error').style.display = "none";
+  document.getElementById('success').style.backgroundColor = "#e67e22";
+  document.getElementById('success').style.display = "block";
+ }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+window.onbeforeunload = function (e) {
+  var badge = document.getElementById('badge').value;
+  var name = document.getElementById('name').value;
+  var division = document.getElementById('division').value;
+  var rank = document.getElementById('rank').value;
+  var training = document.getElementById('training').value;
+  var status = document.getElementById('status').value;
+  
+  if (badge.length != 0 || name.length != 0 || division.length != 0 || rank.length != 0 || training.length != 0 || status.length != 0) {
+    e = e || window.event;
+
+    // For IE and Firefox prior to version 4
+    if (e) {
+        e.returnValue = 'Sure?';
+    }
+
+    // For Safari
+    return 'Sure?';
+  }
+};
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function signatureLoad() {
+	var signature = document.getElementById("signature");
+	var ctx = signature.getContext("2d");
+    
+    // Fill Window Width and Height
+    signature.width = window.innerWidth*0.35;
+	signature.height = window.innerHeight*0.20;
+	
+	// Set Background Color
+    ctx.fillStyle="#fff";
+    ctx.fillRect(0,0,signature.width,signature.height);
+	
+    // Mouse Event Handlers
+	if(signature){
+		var isDown = false;
+		var canvasX, canvasY;
+		ctx.lineWidth = 2;
+		
+		$(signature)
+		.mousedown(function(e){
+			isDown = true;
+			ctx.beginPath();
+			canvasX = e.pageX - signature.offsetLeft;
+			canvasY = e.pageY - signature.offsetTop;
+			ctx.moveTo(canvasX, canvasY);
+		})
+		.mousemove(function(e){
+			if(isDown !== false) {
+				canvasX = e.pageX - signature.offsetLeft;
+				canvasY = e.pageY - signature.offsetTop;
+				ctx.lineTo(canvasX, canvasY);
+				ctx.strokeStyle = "#000";
+				ctx.stroke();
+			}
+		})
+		.mouseup(function(e){
+			isDown = false;
+			ctx.closePath();
+		});
+	}
+	
+	// Touch Events Handlers
+	draw = {
+		started: false,
+		start: function(evt) {
+
+			ctx.beginPath();
+			ctx.moveTo(
+				evt.touches[0].pageX,
+				evt.touches[0].pageY
+			);
+
+			this.started = true;
+
+		},
+		move: function(evt) {
+
+			if (this.started) {
+				ctx.lineTo(
+					evt.touches[0].pageX,
+					evt.touches[0].pageY
+				);
+
+				ctx.strokeStyle = "#000";
+				ctx.lineWidth = 2;
+				ctx.stroke();
+			}
+
+		},
+		end: function(evt) {
+			this.started = false;
+		}
+	};
+	
+	// Touch Events
+	signature.addEventListener('touchstart', draw.start, false);
+	signature.addEventListener('touchend', draw.end, false);
+	signature.addEventListener('touchmove', draw.move, false);
+	
+	// Disable Page Move
+	document.body.addEventListener('touchmove',function(evt){
+		evt.preventDefault();
+	},false);
+};
+window.addEventListener('resize', signatureLoad);
+window.addEventListener('load', signatureLoad);
+</script>
