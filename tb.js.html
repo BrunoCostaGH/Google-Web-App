@@ -1,0 +1,567 @@
+<script>
+  
+  document.addEventListener("DOMContentLoaded", function(){
+    google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache();
+    google.script.run.withSuccessHandler(generateTable).withFailureHandler(onFailure).getTrainingData();
+    google.script.run.withSuccessHandler(pBadges).withFailureHandler(onFailure).badges();
+    google.script.run.withSuccessHandler(pTraining).withFailureHandler(onFailure).trainings();
+    initializeModals();
+    setInterval(function(){ google.script.run.withSuccessHandler(verifyCache).withFailureHandler(onFailure).verifyCache(); },60000)
+  })
+  
+  document.getElementById('badgeEdit').addEventListener('focusout', getName);
+  document.getElementById('badgeEdit').addEventListener('focusout', getDivision);
+  document.getElementById('badgeEdit').addEventListener('focusout', getRank);
+  
+  function verifyCache(data) {
+  if(data[0] == 1){
+    // Do Nothing
+  } else {
+    window.open(data[1]+"?page=auth",'_top');
+  }
+}
+  
+  function getName() {
+    var badge = document.getElementById('badgeEdit').value;
+    if (badge.length != 0 && (badge.length == 3 || badge == "99")) {
+      setTimeout(gName, 1000);
+      document.getElementById('nameEdit').value = "Loading...";
+    } else if(badge.length == 0) {
+      document.getElementById('nameEdit').value = "";
+    }
+   M.updateTextFields(); 
+  }
+
+  function gName() {
+    var badge = document.getElementById('badgeEdit').value;
+  
+    google.script.run.withSuccessHandler(pName).withFailureHandler(onFailure).getName(badge);
+  }
+
+  function pName(name){
+    var badge = document.getElementById('badgeEdit').value;
+    console.log(name[1])
+    if (badge.length != 0 && badge == name[1]) {
+      document.getElementById('nameEdit').value = name[0];
+    }
+   M.updateTextFields();
+  }
+  
+  function getDivision() {
+    var badge = document.getElementById('badgeEdit').value;
+    if (badge.length != 0 && (badge.length == 3 || badge == "99")) {
+      setTimeout(gDivision, 1000);
+      document.getElementById('divisionEdit').value = "Loading...";
+    } else if(badge.length == 0) {
+      document.getElementById('divisionEdit').value = "";
+    }
+   M.updateTextFields();  
+  }
+  
+  function gDivision() {
+    var badge = document.getElementById('badgeEdit').value;
+    var type = document.getElementById('isTA').value;
+  
+    google.script.run.withSuccessHandler(pDivision).withFailureHandler(onFailure).getDivision(badge, type);
+  }
+
+  function pDivision(division){
+    var badge = document.getElementById('badgeEdit').value;
+    if (badge.length != 0 && badge == division[1]) {
+      if (division[0] != true) {
+        document.getElementById('divisionEdit').value = division[0];
+      }
+    }
+   M.updateTextFields();
+  }
+  
+  function getRank() {  
+    var badge = document.getElementById('badgeEdit').value;
+    if (badge.length != 0 && (badge.length == 3 || badge == "99")) {
+      setTimeout(gRank, 1000);
+      document.getElementById('rankEdit').value = "Loading..."; 
+    } else if(badge.length == 0) {
+      document.getElementById('rankEdit').value = "";
+    }
+   M.updateTextFields();  
+  }
+  
+  function gRank() {
+    var badge = document.getElementById('badgeEdit').value;
+    var type = document.getElementById('isTA').value;
+  
+    google.script.run.withSuccessHandler(pRank).withFailureHandler(onFailure).getRank(badge, type);
+  }
+
+  function pRank(rank){
+    var badge = document.getElementById('badgeEdit').value;
+    if (badge.length != 0 && badge == rank[1]) {
+      document.getElementById('rankEdit').value = rank[0];
+      if (rank[2] == true && rank[0].length != 0) {
+        document.getElementById('divisionEdit').value = "Training Academy";
+      } else if (rank[0].length == 0) {
+      document.getElementById('rankEdit').value = "Not Available";
+      }
+    }
+   M.updateTextFields();
+  }
+  
+  
+  function pBadges(badges){
+    var elems = document.getElementById('badgeEdit');
+    var instances = M.Autocomplete.init(elems, { data: badges });
+  }
+  
+  function pTraining(training) {
+    var autocomplete = document.getElementById('trainingEdit');
+    var instances = M.Autocomplete.init(autocomplete, { data: training });
+  }
+   
+  function generateTable(data){
+   
+    var tbody = document.getElementById("tbody");
+    
+    data[0].forEach(function(i){
+     if(data[2] >= 5){
+       var row = document.createElement("tr");
+        
+       var col1 = document.createElement("td");
+       col1.textContent = i[0];
+       row.appendChild(col1);
+        
+       var col2 = document.createElement("td");
+       col2.textContent = i[1];
+       row.appendChild(col2);
+        
+       var col3 = document.createElement("td");
+       col3.textContent = i[2];
+       row.appendChild(col3);
+        
+       var col4 = document.createElement("td");
+       col4.textContent = i[3];
+       row.appendChild(col4);
+        
+       var col5 = document.createElement("td");
+       col5.textContent = i[4];
+       row.appendChild(col5);
+        
+       var col6 = document.createElement("td");
+       col6.textContent = i[5];
+       row.appendChild(col6);
+        
+       var col7 = document.createElement("td");
+       col7.textContent = i[6];
+       row.appendChild(col7);
+       
+       var col8 = document.createElement("td");
+       col8.textContent = i[9];
+       row.appendChild(col8);
+       
+       var col9 = document.createElement("td");
+       col9.innerHTML  = '<button data-target="viewModal" class="btn-flat modal-trigger white-text" onclick="getData('+i[10]+')">View</button><button data-target="editModal" class="btn-flat modal-trigger white-text" onclick="getEditData('+i[10]+')">Edit</button><button data-target="revokeModal" class="btn-flat modal-trigger red-text" onclick="setIndex('+i[10]+')">Revoke</button><button data-target="deleteModal" class="btn-flat modal-trigger red-text" onclick="setIndex('+i[10]+')"><b>Delete</b></button>';
+       row.appendChild(col9);
+       
+      tbody.appendChild(row);
+     } else if (i[9] != "Deleted"){
+       var row = document.createElement("tr");
+        
+       var col1 = document.createElement("td");
+       col1.textContent = i[0];
+       row.appendChild(col1);
+        
+       var col2 = document.createElement("td");
+       col2.textContent = i[1];
+       row.appendChild(col2);
+        
+       var col3 = document.createElement("td");
+       col3.textContent = i[2];
+       row.appendChild(col3);
+        
+       var col4 = document.createElement("td");
+       col4.textContent = i[3];
+       row.appendChild(col4);
+        
+       var col5 = document.createElement("td");
+       col5.textContent = i[4];
+       row.appendChild(col5);
+        
+       var col6 = document.createElement("td");
+       col6.textContent = i[5];
+       row.appendChild(col6);
+        
+       var col7 = document.createElement("td");
+       col7.textContent = i[6];
+       row.appendChild(col7);
+       
+       var col8 = document.createElement("td");
+       col8.textContent = i[9];
+       row.appendChild(col8);
+       
+       if(data[2] = 4) {
+        var col9 = document.createElement("td");
+        col9.innerHTML  = '<button data-target="viewModal" class="btn-flat modal-trigger white-text" onclick="getData('+i[10]+')">View</button><button data-target="editModal" class="btn-flat modal-trigger white-text" onclick="getEditData('+i[10]+')">Edit</button><button data-target="revokeModal" class="btn-flat modal-trigger red-text" onclick="setIndex('+i[10]+')">Revoke</button><button data-target="deleteModal" class="btn-flat modal-trigger red-text" onclick="setIndex('+i[10]+')" disabled><b>Delete</b></button>';
+        row.appendChild(col9);
+       } else if(i[8] == data[1]) {
+        var col9 = document.createElement("td");
+        col9.innerHTML  = '<button data-target="viewModal" class="btn-flat modal-trigger white-text" onclick="getData('+i[10]+')">View</button><button data-target="editModal" class="btn-flat modal-trigger white-text" onclick="getEditData('+i[10]+')">Edit</button><button data-target="revokeModal" class="btn-flat modal-trigger red-text" onclick="setIndex('+i[10]+')" disabled>Revoke</button><button data-target="deleteModal" class="btn-flat modal-trigger red-text" onclick="setIndex('+i[10]+')" disabled><b>Delete</b></button>';
+        row.appendChild(col9);
+       } else {
+        var col9 = document.createElement("td");
+        col9.innerHTML  = '<button data-target="viewModal" class="btn-flat modal-trigger white-text" onclick="getData('+i[10]+')">View</button><button data-target="editModal" class="btn-flat modal-trigger white-text" onclick="getEditData('+i[10]+')" disabled>Edit</button><button data-target="revokeModal" class="btn-flat modal-trigger red-text" onclick="setIndex('+i[10]+')" disabled>Revoke</button><button data-target="deleteModal" class="btn-flat modal-trigger red-text" onclick="setIndex('+i[10]+')" disabled><b>Delete</b></button>';
+        row.appendChild(col9);
+       }
+      tbody.appendChild(row);
+     }
+    });
+   searchTraining()
+  }
+  
+  function initializeModals() {
+    var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, {onCloseStart: function(){
+    document.getElementById("badgeView").value = "";
+    document.getElementById("nameView").value = "";
+    document.getElementById("rankView").value = "";
+    document.getElementById("divisionView").value = "";
+    document.getElementById("trainingView").value = "";
+    document.getElementById("dateView").value = "";
+    document.getElementById("instructorView").value = "";
+    document.getElementById("rankInstructorView").value = "";
+    document.getElementById("badgeEdit").value = "";
+    document.getElementById("nameEdit").value = "";
+    document.getElementById("rankEdit").value = "";
+    document.getElementById("divisionEdit").value = "";
+    document.getElementById("trainingEdit").value = "";
+    document.getElementById("dateEdit").value = "";
+    document.getElementById("instructorEdit").value = "";
+    document.getElementById("rankInstructorEdit").value = "";
+    M.updateTextFields();
+    },
+    });
+  }
+  
+  function getData(index){
+    google.script.run.withSuccessHandler(loadData).withFailureHandler(onFailure).loadData(index);
+  }  
+  
+  function getEditData(index, type){
+    google.script.run.withSuccessHandler(loadEditData).withFailureHandler(onFailure).loadData(index);
+  }
+  
+  function getLogs(){
+   var index = document.getElementById("index").value;
+   var badgeView = document.getElementById("badgeView").value;
+   
+   google.script.run.withSuccessHandler(generateLogsTable).withFailureHandler(onFailure).loadLogsData(index);
+  }  
+  
+  function loadData(i){
+    document.getElementById("index").value = i[8];
+    document.getElementById("badgeView").value = i[0];
+    document.getElementById("nameView").value = i[1];
+    document.getElementById("rankView").value = i[2];
+    document.getElementById("divisionView").value = i[3];
+    document.getElementById("trainingView").value = i[4];
+    document.getElementById("dateView").value = i[5];
+    document.getElementById("instructorView").value = i[6];
+    if (!i[7]){document.getElementById("rankInstructorView").value='Not Available'}else{document.getElementById("rankInstructorView").value=i[7];}
+    document.getElementById("log-btn").style.display = "";
+    M.updateTextFields();
+  }
+  
+  function loadEditData(i){
+    document.getElementById('isTA').value = i[9];
+    document.getElementById("index").value = i[8];
+    document.getElementById("badgeEdit").value = i[0];
+    document.getElementById("nameEdit").value = i[1];
+    document.getElementById("rankEdit").value = i[2];
+    document.getElementById("divisionEdit").value = i[3];
+    document.getElementById("trainingEdit").value = i[4];
+    document.getElementById("dateEdit").value = i[5];
+    document.getElementById("instructorEdit").value = i[6];
+    if (!i[7]){document.getElementById("rankInstructorEdit").value='Not Available'}else{document.getElementById("rankInstructorEdit").value=i[7];}
+    M.updateTextFields();
+  }
+
+function updateData() {
+    
+  var index = document.getElementById('index').value;
+  var badge = document.getElementById('badgeEdit').value;
+  var name = document.getElementById('nameEdit').value;
+  var rank = document.getElementById('rankEdit').value;
+  var division = document.getElementById('divisionEdit').value;
+  var training = document.getElementById('trainingEdit').value;
+  var type = document.getElementById('isTA').value;
+  
+  var message, x 
+  message = document.getElementById('errorM');
+  message.innerHTML = "";
+  try {  
+    if ( name.length == 0 && badge.length == 0 && rank.length == 0 && division.length == 0 && training.length == 0) {
+      throw "ERROR: Check Information.";
+    } else if ( badge.length != 0 && badge == "Loading..." || division == "Loading..." || rank == "Loading..." ) {
+      throw "ERROR: Please wait for data to load.";
+    } else if( training.length == 0 ) {
+      throw "ERROR: Invalid Training";
+    } else {
+      document.getElementById('error').style.display = "none"; 
+      
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).updateData(badge, name, rank, division, training, index, type);
+    }
+  }
+  catch(err) {
+    document.getElementById('success').style.display = "none";
+    document.getElementById('error').style.display = "block";
+    message.innerHTML = err;
+  }
+ document.getElementById('index').value = "";
+ document.getElementById('isTA').value = "";
+} 
+
+function onFailure(error) {
+  var message = document.getElementById('errorM');
+  message.innerHTML = error.message;
+  
+  document.getElementById('success').style.display = "none";
+  document.getElementById('error').style.display = "block";
+}
+      
+function onSuccess(type){
+  var message = document.getElementById('successM');
+  
+  if (type == "update") {
+    message.innerHTML = "Training has been updated successfully!";
+  } else if(type == "delete"){
+    message.innerHTML = "Training has been deleted successfully!";
+  } else if(type == "revoke"){
+    message.innerHTML = "Training has been revoked successfully!";
+  } else {
+    message.innerHTML = "Success!";
+  }
+  document.getElementById('success').style.display = "block";
+  
+  setTimeout(removeNotification, 10000)
+  function removeNotification() {
+    document.getElementById('success').style.display = "none";
+  }
+  
+  updateTable();
+}
+
+function updateTable(){
+  var tbody = document.getElementById("tbody");
+  var tpager = document.getElementById("myPager");
+  
+  while(tpager.hasChildNodes()) 
+  {
+   tpager.removeChild(tpager.firstChild);
+  }  
+  while(tbody.hasChildNodes()) 
+  {
+   tbody.removeChild(tbody.firstChild);
+  }
+  google.script.run.withSuccessHandler(generateTable).withFailureHandler(onFailure).getTrainingData();
+};
+
+function setIndex(i){
+ document.getElementById('index').value = i;
+};
+
+function deleteRow(){
+ var index = document.getElementById('index').value;
+ 
+ 
+  google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).deleteRow(index);
+};
+
+function revokeTraining(){
+ var index = document.getElementById('index').value;
+ 
+ 
+  google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).revokeTraining(index);
+};
+
+function searchTraining() {
+  var input = document.getElementById("search").value;
+
+  if (input.length == 0) {
+   document.getElementById("pager").style.display = "";
+   $('#trainingDB5').pageMe({pagerSelector:'#myPager'});
+  } else if(input.length > 0){
+   document.getElementById("pager").style.display = "none";
+   var tpager = document.getElementById("myPager");
+   while(tpager.hasChildNodes()){tpager.removeChild(tpager.firstChild);};
+    searchTrainingReady();
+  }
+}
+
+function searchTrainingReady() {
+  var input, filter, table, tr, td, td2, td3, i, txtValue, txtValue2, txtValue3;
+  input = document.getElementById("search");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("trainingDB5");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    td2 = tr[i].getElementsByTagName("td")[1];
+    td3 = tr[i].getElementsByTagName("td")[4];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      txtValue2 = td2.textContent || td2.innerText;
+      txtValue3 = td3.textContent || td3.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else if(txtValue2.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else if(txtValue3.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+
+function generateLogsTable(data){   
+ var tbody = document.getElementById("logstbody");
+    
+ if (data[0]){
+  data[0].forEach(function(i){
+   var row = document.createElement("tr");
+            
+   var col1 = document.createElement("td");
+   col1.textContent = i[1]+' | '+i[2]+' by: '+i[3];
+   row.appendChild(col1);
+           
+   tbody.appendChild(row);
+  });
+ } else {
+  var row = document.createElement("tr");
+            
+  var col1 = document.createElement("td");
+  col1.textContent = 'No logs to show.';
+  row.appendChild(col1);
+           
+  tbody.appendChild(row);
+ }
+}
+
+function clearLogsTable(){
+  var tbody = document.getElementById("logstbody");
+  
+  while(tbody.hasChildNodes()) 
+  {
+   tbody.removeChild(tbody.firstChild);
+  }
+  document.getElementById('index').value = "";
+};
+
+$.fn.pageMe = function(opts){
+    var $this = this,
+        defaults = {
+            activeColor: 'transparent',
+            perPage: 30,
+            showPrevNext: true,
+            nextText: '',
+            prevText: '',
+            hidePageNumbers: true
+        },
+        settings = $.extend(defaults, opts);
+    
+    //$this.addClass('initialized');
+
+    var listElement = $this.find("tbody");
+    var perPage = settings.perPage;
+    var children = listElement.children();
+    var pager = $('.pager');
+    
+    if (typeof settings.childSelector!="undefined") {
+        children = listElement.find(settings.childSelector);
+    }
+
+    if (typeof settings.pagerSelector!="undefined") {
+        pager = $(settings.pagerSelector);
+    }
+
+    var numItems = children.size();
+    var numPages = Math.ceil(numItems/perPage);
+    
+    $("#total_reg").html(numItems+" Total Entries");
+
+    pager.data("curr",0);
+
+    if (settings.showPrevNext){
+        $('<li><a href="#" id="prev_link" class="prev_link white-text" title="'+settings.prevText+'"><i class="material-icons">chevron_left</i></a></li>').appendTo(pager);
+    }
+
+    var curr = 0;
+    while(numPages > curr && (settings.hidePageNumbers==false)){
+        $('<li class="waves-effect white-text"><a href="#" class="page_link">'+(curr+1)+'</a></li>').appendTo(pager);
+        curr++;
+    }
+
+    if (settings.showPrevNext){
+        $('<li><a href="#" id="next_link" class="next_link white-text"  title="'+settings.nextText+'"><i class="material-icons">chevron_right</i></a></li>').appendTo(pager);
+    }
+
+    pager.find('.page_link:first').addClass('active');
+    pager.find('.prev_link').hide();
+    if (numPages<=1) {
+        pager.find('.next_link').hide();
+    }
+  	pager.children().eq(1).addClass("active "+settings.activeColor);
+
+    children.hide();
+    children.slice(0, perPage).show();
+
+    pager.find('li .page_link').click(function(){
+        var clickedPage = $(this).html().valueOf()-1;
+        goTo(clickedPage,perPage);
+        return false;
+    });
+    pager.find('li .prev_link').click(function(){
+        previous();
+        return false;
+    });
+    pager.find('li .next_link').click(function(){
+        next();
+        return false;
+    });
+
+    function previous(){
+        var goToPage = parseInt(pager.data("curr")) - 1;
+        goTo(goToPage);
+    }
+
+    function next(){
+        goToPage = parseInt(pager.data("curr")) + 1;
+        goTo(goToPage);
+    }
+
+    function goTo(page){
+        var startAt = page * perPage,
+            endOn = startAt + perPage;
+
+        children.css('display','none').slice(startAt, endOn).show();
+
+        if (page>=1) {
+            pager.find('.prev_link').show();
+        }
+        else {
+            pager.find('.prev_link').hide();
+        }
+
+        if (page<(numPages-1)) {
+            pager.find('.next_link').show();
+        }
+        else {
+            pager.find('.next_link').hide();
+        }
+
+        pager.data("curr",page);
+      	pager.children().removeClass("active "+settings.activeColor);
+        pager.children().eq(page+1).addClass("active "+settings.activeColor);
+
+    }
+};
+</script>
