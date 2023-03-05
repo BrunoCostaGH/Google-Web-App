@@ -10,8 +10,6 @@
 
   **Snow.js - v0.0.3** by [Kurisu](kurisubrooks.com)
 
-## Badges
-
 ![contributors](https://flat.badgen.net/github/contributors/BrunoCostaGH/Google-Web-App)
 ![issues](https://flat.badgen.net/github/issues/BrunoCostaGH/Google-Web-App)
 ![commits](https://flat.badgen.net/github/commits/BrunoCostaGH/Google-Web-App/master)
