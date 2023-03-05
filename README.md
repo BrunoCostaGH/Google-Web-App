@@ -6,6 +6,10 @@
   Before this solution we had multiples ways which human error could influence the workflow and overall operation of the spreadsheet, so I had find a solution.
   With this Web App users only have to fill the data on a form which features multiple fields with auto-complete. After all the information is submitted and verified, it automatically gets added to the spreadsheet.
 
+## Credits
+
+  **Snow.js - v0.0.3** by [Kurisu](kurisubrooks.com)
+
 ## Badges
 
 ![contributors](https://flat.badgen.net/github/contributors/BrunoCostaGH/Google-Web-App)
