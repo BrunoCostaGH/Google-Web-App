@@ -9,12 +9,12 @@
 ## Credits
 
   **Snow.js - v0.0.3** by [Kurisu](kurisubrooks.com)
-
-![GitHub](https://img.shields.io/github/license/BrunoCostaGH/Google-Web-App?style=for-the-badge)
-![GitHub contributors](https://img.shields.io/github/contributors/BrunoCostaGH/Google-Web-App?style=for-the-badge)
-![GitHub issues](https://img.shields.io/github/issues/BrunoCostaGH/Google-Web-App?style=for-the-badge)
-![GitHub Release Date](https://img.shields.io/github/release-date/BrunoCostaGH/Google-Web-App?style=for-the-badge)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/BrunoCostaGH/Google-Web-App?style=for-the-badge)
+  
+[![GitHub](https://img.shields.io/github/license/BrunoCostaGH/Google-Web-App?style=for-the-badge)]()
+[![GitHub contributors](https://img.shields.io/github/contributors/BrunoCostaGH/Google-Web-App?style=for-the-badge)]()
+[![GitHub issues](https://img.shields.io/github/issues/BrunoCostaGH/Google-Web-App?style=for-the-badge)](https://github.com/BrunoCostaGH/Google-Web-App/issues)
+[![GitHub Release Date](https://img.shields.io/github/release-date/BrunoCostaGH/Google-Web-App?style=for-the-badge)](https://github.com/BrunoCostaGH/Google-Web-App/releases/latest)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/BrunoCostaGH/Google-Web-App?style=for-the-badge)](https://github.com/BrunoCostaGH/Google-Web-App/releases/latest)
 
 ## Features
   - Module Loading Script w/ Loading Screen
