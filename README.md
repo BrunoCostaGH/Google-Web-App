@@ -2,16 +2,16 @@
 
 ## Description
 
-  In search of a better way to interact with google sheets, and having found Google Web App, I decided to create an interface for the members of the rolepllay gaming community I was a member of to manage a spreadsheet loaded with an overwhelming amount of data. 
-  Before this solution we had multiples ways which human error could influence the workflow and overall operation of the spreadsheet, so I had find a solution.
-  With this Web App users only have to fill the data on a form which features multiple fields with auto-complete. After all the information is submitted and verified, it automatically gets added to the spreadsheet.
+  In search of a better way to interact with google sheets, and having found Google Web App, I decided to create an interface for the members of the roleplay gaming community I was a member of to manage a spreadsheet loaded with an overwhelming amount of data. 
+  Before this solution, we had multiple ways in which human error could influence the workflow and overall operation of the spreadsheet, so I had to find a solution.
+  With this Web App, users only have to fill in the data on a form that features multiple fields with auto-complete. After all the information is submitted and verified, it automatically gets added to the spreadsheet.
 
 ## Credits
 
   **Snow.js - v0.0.3** by [Kurisu](kurisubrooks.com)
   
-[![GitHub](https://img.shields.io/github/license/BrunoCostaGH/Google-Web-App?style=for-the-badge)]()
-[![GitHub contributors](https://img.shields.io/github/contributors/BrunoCostaGH/Google-Web-App?style=for-the-badge)]()
+[![GitHub](https://img.shields.io/github/license/BrunoCostaGH/Google-Web-App?style=for-the-badge)](https://github.com/BrunoCostaGH/Google-Web-App)
+[![GitHub contributors](https://img.shields.io/github/contributors/BrunoCostaGH/Google-Web-App?style=for-the-badge)](https://github.com/BrunoCostaGH/Google-Web-App)
 [![GitHub issues](https://img.shields.io/github/issues/BrunoCostaGH/Google-Web-App?style=for-the-badge)](https://github.com/BrunoCostaGH/Google-Web-App/issues)
 [![GitHub Release Date](https://img.shields.io/github/release-date/BrunoCostaGH/Google-Web-App?style=for-the-badge)](https://github.com/BrunoCostaGH/Google-Web-App/releases/latest)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/BrunoCostaGH/Google-Web-App?style=for-the-badge)](https://github.com/BrunoCostaGH/Google-Web-App/releases/latest)
